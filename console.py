@@ -140,9 +140,13 @@ class HBNBCommand(cmd.Cmd):
                 elif all([c in "1234567890." for c in value]):
                     setattr(new_instance, key, float(value))
                 elif value[0] == value[-1] == '"':
-                    setattr(new_instance, key, eval(value).replace("_", " "))
+                    try:
+                        setattr(new_instance, key,
+                                eval(value).replace("_", " "))
+                    except SyntaxError:
+                        pass
 
-        storage.save()
+        new_instance.save()
         print(new_instance.id)
         storage.save()
 
@@ -226,7 +230,8 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage.all().items():
+            cls = HBNBCommand.classes[args]
+            for k, v in storage.all(cls).items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
