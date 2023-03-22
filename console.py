@@ -223,22 +223,17 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
-
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
             cls = HBNBCommand.classes[args]
-            for k, v in storage.all(cls).items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            print("[{}]".format(", ".join(
+                list(x.__str__() for x in storage.all(cls).values()))))
         else:
-            for k, v in storage.all().items():
-                print_list.append(str(v))
-
-        print(print_list)
+            print("[{}]".format(", ".join(
+                list(x.__str__() for x in storage.all().values()))))
 
     def help_all(self):
         """ Help information for the all command """
@@ -336,9 +331,9 @@ class HBNBCommand(cmd.Cmd):
                     att_val = HBNBCommand.types[att_name](att_val)
 
                 # update dictionary with name, value pair
-                new_dict.__dict__.update({att_name: att_val})
+                setattr(new_dict, att_name, att_val)
 
-        new_dict.save()  # save updates to file
+        new_dict.save()
 
     def help_update(self):
         """ Help information for the update class """
