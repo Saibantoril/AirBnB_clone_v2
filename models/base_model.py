@@ -23,11 +23,20 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
         else:
+            if not kwargs.get('id'):
+                kwargs['id'] = str(uuid.uuid4())
+            if not kwargs.get('created_at'):
+                kwargs['created_at'] = datetime.now().isoformat()
+            if not kwargs.get('updated_at'):
+                kwargs['updated_at'] = datetime.now().isoformat()
             kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
             kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+            try:
+                del kwargs['__class__']
+            except KeyError:
+                pass
             self.__dict__.update(kwargs)
 
     def __str__(self):
