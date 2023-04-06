@@ -1,3 +1,8 @@
+
+#!/usr/bin/python3
+"""
+A Fabric script that distributes an archive to my web servers using the function do_deploy 
+"""
 from fabric import Connection
 from datetime import datetime
 
