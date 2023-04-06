@@ -9,15 +9,16 @@
 # - Updating Nginx configuration to serve /data/web_static/current/ to hbnb_static
 
 # Install Nginx if not already installed
-
-if ! which nginx > /dev/null 2>&1; then
-    sudo apt-get update
-    sudo apt-get -y install nginx
-fi
-
+sudo apt-get update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
 # Create directory structure for web_static deployment
-sudo mkdir -p /data/web_static/releases/test /data/web_static/shared /data/web_static/current
-
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+sudo mkdir -p /data/web_static/releases/
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+sudo touch /data/web_static/releases/test/index.html
 # Create a fake HTML file to test Nginx configuration
 sudo echo "<html>
   <head>
