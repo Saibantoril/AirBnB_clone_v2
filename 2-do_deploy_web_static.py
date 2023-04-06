@@ -1,61 +1,51 @@
 #!/usr/bin/python3
 """
-Distributes an archive to web servers using Fabric and the do_deploy function.
+Fabric script that distributes an archive to your web servers, using the function do_deploy
 """
 
+import os.path
 from fabric.api import *
-from os import path
 
 env.hosts = ['52.87.219.241', '54.242.162.151']
 env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
 
 def do_deploy(archive_path):
     """
-    Deploys web files to server
+    Distributes an archive to your web servers, using the function do_deploy
     """
-    if not path.exists(archive_path):
+    if not os.path.exists(archive_path):
         return False
 
     try:
-        # Upload archive
-        put(archive_path, '/tmp/')
+        # Upload archive to the web server
+        put(archive_path, "/tmp/")
 
-        # Create target directory
-        archive_filename = archive_path.split("/")[-1]
-        archive_basename = archive_filename.split(".")[0]
-        release_path = "/data/web_static/releases/" + archive_basename
-        run("sudo mkdir -p " + release_path)
+        # Get filename without extension
+        filename = archive_path.split("/")[-1]
+        name = filename.split(".")[0]
 
-        # Uncompress archive and delete .tgz
-        run("sudo tar -xzf /tmp/" + archive_filename + " -C " + release_path + "/")
-        run("sudo rm /tmp/" + archive_filename)
+        # Create directory for the archive
+        run("sudo mkdir -p /data/web_static/releases/{}".format(name))
 
-        # Move contents into host web_static
-        run("sudo mv " + release_path + "/web_static/* " + release_path + "/")
-        run("sudo rm -rf " + release_path + "/web_static")
+        # Uncompress archive
+        run("sudo tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(filename, name))
 
-        # Delete pre-existing symbolic link
-        run("sudo rm -rf /data/web_static/current")
+        # Remove archive
+        run("sudo rm /tmp/{}".format(filename))
 
-        # Create new symbolic link
-        run("sudo ln -s " + release_path + " /data/web_static/current")
+        # Move files to the proper directory
+        run("sudo mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(name, name))
+
+        # Remove unnecessary directory
+        run("sudo rm -rf /data/web_static/releases/{}/web_static".format(name))
+
+        # Remove old symbolic link and create new one
+        run("sudo rm -f /data/web_static/current")
+        run("sudo ln -s /data/web_static/releases/{}/ /data/web_static/current".format(name))
+
+        print("New version deployed!")
+        return True
+
     except Exception as e:
-        print(e)
+        print("Deployment failed: {}".format(e))
         return False
-
-    return True
-
-def deploy():
-    """
-    Runs the do_deploy function on all hosts in env.hosts
-    """
-    archive_path = "web_static_{}.tgz".format(datetime.now().strftime("%Y%m%d%H%M%S"))
-    local("tar -czvf {} web_static/".format(archive_path))
-
-    results = execute(do_deploy, archive_path)
-
-    if all(results.values()):
-        print("All deployments successful")
-    else:
-        print("Deployment failed on some hosts")
