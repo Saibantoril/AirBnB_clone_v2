@@ -6,7 +6,7 @@ Distributes an archive to web servers using Fabric and the do_deploy function.
 from fabric.api import *
 from os import path
 
-env.hosts = ['<IP web-01>', '<IP web-02>']
+env.hosts = ['52.87.219.241', '54.242.162.151']
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/id_rsa'
 
