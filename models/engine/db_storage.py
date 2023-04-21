@@ -26,7 +26,7 @@ class DBStorage:
         host = getenv("HBNB_MYSQL_HOST")
         database = getenv("HBNB_MYSQL_DB")
         conn_str = 'mysql+mysqldb://{}:{}@{}/{}'.format(
-                user, passwd, host, database)
+            user, passwd, host, database)
         self.__engine = create_engine(conn_str, pool_pre_ping=True)
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
@@ -68,3 +68,6 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
+    def close(self):
+        """ Closes the session """
+        self.__session.close()
