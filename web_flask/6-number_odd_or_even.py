@@ -65,9 +65,9 @@ app = Flask(__name__)
 def number_odd_or_even(n):
     if isinstance(n, int):
         if n % 2 == 0:
-            return render_template('number.html', result="even", number=n)
+            return render_template('6-number_odd_or_even.html', result="even", number=n)
         else:
-            return render_template('number.html', result="odd", number=n)
+            return render_template('6-number_odd_or_even.html', result="odd", number=n)
     else:
         return "Invalid input!"
 
