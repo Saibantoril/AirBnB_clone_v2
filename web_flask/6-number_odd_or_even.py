@@ -59,14 +59,17 @@ def number_template(n=None):
         return render_template("5-number.html", n=n)
 
 
+app = Flask(__name__)
+
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
 def number_odd_or_even(n):
-    """
-    Takes an integer from the URL and renders an HTML template indicating
-    whether it is odd or even.
-    """
-    return render_template('number_odd_or_even.html', number=n, parity='even' if n % 2 == 0 else 'odd')
-
+    if isinstance(n, int):
+        if n % 2 == 0:
+            return render_template('number.html', result="even", number=n)
+        else:
+            return render_template('number.html', result="odd", number=n)
+    else:
+        return "Invalid input!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
