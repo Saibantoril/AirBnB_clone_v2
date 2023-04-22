@@ -20,8 +20,8 @@ def states_list():
     Returns:
         A string with the HTML content of the page.
     """
-    states = storage.all(State).values()
-    states_sorted = sorted(states, key=lambda x: x.name)
+    states = storage.all()
+    states_sorted = sorted(states)
     return render_template('7-states_list.html', states=states_sorted)
 
 
