@@ -21,8 +21,7 @@ def states_list():
         A string with the HTML content of the page.
     """
     states = storage.all()
-    states_sorted = sorted(states)
-    return render_template('7-states_list.html', states=states_sorted)
+    return render_template('7-states_list.html', states=states)
 
 
 @app.teardown_appcontext
